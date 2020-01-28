@@ -13,6 +13,7 @@ public class Environnement {
     private int N, M;
 
     private int nbIter;
+    private float erreur;
 
     private int i;
     float kPlus, kMoins;
@@ -23,18 +24,19 @@ public class Environnement {
         return instance;
     }
 
-    public static void createInstance(int n, int m, int nbAgents, int nbA, int nbB, int i, float kPlus, float kMoins, int nbIter) {
-        instance = new Environnement(n, m, nbAgents, nbA, nbB, i, kPlus, kMoins, nbIter);
+    public static void createInstance(int n, int m, int nbAgents, int nbA, int nbB, int i, float kPlus, float kMoins, int nbIter, float erreur) {
+        instance = new Environnement(n, m, nbAgents, nbA, nbB, i, kPlus, kMoins, nbIter, erreur);
 
         instance.lancer();
     }
 
-    private Environnement(int n, int m, int nbAgents, int nbA, int nbB, int i, float kPlus, float kMoins, int nbIter) {
+    private Environnement(int n, int m, int nbAgents, int nbA, int nbB, int i, float kPlus, float kMoins, int nbIter, float erreur) {
 
         this.N = n;
         this.M = m;
 
         this.nbIter = nbIter;
+        this.erreur = erreur;
 
         this.i = i;
         this.kPlus = kPlus;
@@ -114,6 +116,10 @@ public class Environnement {
 
     public int getNbIter() {
         return nbIter;
+    }
+
+    public float getErreur() {
+        return erreur;
     }
 
     // Retour des PERCEPTIONS

@@ -1,17 +1,27 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 public class Agent extends Thread {
 
     public Agent() {
-        memoire = new ArrayList<>();
+        memoire = new LinkedList<>();
     }
 
     // CARACTERISTIQUES
 
     private Objet porte;
-    private ArrayList<String> memoire;
+    private LinkedList<String> memoire;
+
+    private void addMemoire(String type) {
+        if (memoire.size() >= 10) {
+            memoire.push(type);
+            memoire.poll();
+        } else {
+            memoire.push(type);
+        }
+    }
 
     // ACTIONS
 
@@ -98,6 +108,37 @@ public class Agent extends Thread {
         return randValue < proba;
     }
 
+    private String reconnaissanceObjet(String typeInitial) {
+        Environnement env = Environnement.getInstance();
+        Random random = new Random();
+
+        String autreType;
+        if (typeInitial.equals("A")) {
+            autreType = "B";
+        } else {
+            autreType = "A";
+        }
+
+        float proba = (nbTypeEnMemoire(typeInitial) + nbTypeEnMemoire(autreType) * env.getErreur()) / memoire.size();
+
+        float randValue = random.nextFloat();
+        if (randValue < proba) {
+            return autreType;
+        } else {
+            return typeInitial;
+        }
+    }
+
+    private int nbTypeEnMemoire(String type) {
+        int counter = 0;
+        for (String s: memoire) {
+            if (s.equals(type))
+                ++counter;
+        }
+
+        return counter;
+    }
+
     // COMPORTEMENT
 
     @Override
@@ -116,12 +157,12 @@ public class Agent extends Thread {
 
             if (porte == null) {
                 // Pas d'objet sur mon dos.
-                if (caseActuelle.getObjet() != null && doitPrendre(caseActuelle.getObjet().getType(), voisins)) {
+                if (caseActuelle.getObjet() != null && doitPrendre(reconnaissanceObjet(caseActuelle.getObjet().getType()), voisins)) {
                     prendre();
                 }
             } else {
                 // Je porte déjà un objet (sur mon dos).
-                if (caseActuelle.getObjet() == null && doitDeposer(porte.getType(), voisins)) {
+                if (caseActuelle.getObjet() == null && doitDeposer(reconnaissanceObjet(porte.getType()), voisins)) {
                     deposer();
                 }
             }
