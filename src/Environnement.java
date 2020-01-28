@@ -1,8 +1,5 @@
-import org.omg.IOP.ExceptionDetailMessage;
-
 import javax.swing.*;
 import java.awt.*;
-import java.security.cert.X509Extension;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
