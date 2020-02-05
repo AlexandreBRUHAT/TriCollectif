@@ -23,6 +23,10 @@ public class Agent extends Thread {
         }
     }
 
+    private void addMemoireMouvement(List<String> types) {
+        types.forEach(s -> addMemoire(s));
+    }
+
     // ACTIONS
 
     private void seDeplacer() {
@@ -43,7 +47,7 @@ public class Agent extends Thread {
                 break;
         }
 
-        env.seDeplacer(direction, this);
+        addMemoireMouvement(env.seDeplacer(direction, this));
     }
 
     private void prendre() {

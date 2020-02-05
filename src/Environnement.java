@@ -153,12 +153,19 @@ public class Environnement {
 
     // Actions sur l'environnement
 
-    public void seDeplacer(String direction, Agent agent) {
-        for (int k = 0; k < i; ++k) {
+    public List<String> seDeplacer(String direction, Agent agent) {
 
-            if (!seDeplacerUnitaire(direction, agent))
-                return;
+        List<String> memoires = new ArrayList<>();
+        String s;
+        for (int k = 0; k < i; ++k) {
+            s = seDeplacerUnitaire(direction, agent);
+            if (s == null)
+                return memoires;
+
+            memoires.add(s);
         }
+
+        return  memoires;
     }
 
     public Objet prendre(Agent agent) {
@@ -185,28 +192,31 @@ public class Environnement {
 
     // Utilitaires
 
-    private boolean seDeplacerUnitaire(String direction, Agent agent) {
+    private String seDeplacerUnitaire(String direction, Agent agent) {
         Case caseAgent = agentPosition.get(agent);
 
         if (direction.equals("N") && caseAgent.getX() > 0 && grille.get((caseAgent.getX() - 1) * N + caseAgent.getY()).getAgent() == null) {
 
             setAgentCase(caseAgent,  grille.get((caseAgent.getX() - 1) * N + caseAgent.getY()), agent);
-            return true;
+
         } else if (direction.equals("S") && caseAgent.getX() < N-1 && grille.get((caseAgent.getX()+1) * N + caseAgent.getY()).getAgent() == null) {
 
             setAgentCase(caseAgent,  grille.get((caseAgent.getX() + 1) * N + caseAgent.getY()), agent);
-            return true;
+
         } else if (direction.equals("E") && caseAgent.getY() < M-1 && grille.get((caseAgent.getX()) * N + caseAgent.getY() + 1).getAgent() == null) {
 
             setAgentCase(caseAgent,  grille.get((caseAgent.getX()) * N + caseAgent.getY() + 1), agent);
-            return true;
+
         } else  if (direction.equals("O") && caseAgent.getY() > 0 && grille.get((caseAgent.getX()) * N + caseAgent.getY() - 1).getAgent() == null) {
 
             setAgentCase(caseAgent,  grille.get((caseAgent.getX()) * N + caseAgent.getY() - 1), agent);
-            return true;
+
+        } else {
+            return null;
         }
 
-        return false;
+        Objet objet = agentPosition.get(agent).getObjet();
+        return (objet != null ? objet.getType() : "");
     }
 
     private List<Case> getVoisinsUnitaire(int diffX, int diffY, Case caseOrigine) {
