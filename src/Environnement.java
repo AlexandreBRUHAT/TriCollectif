@@ -24,13 +24,13 @@ public class Environnement {
         return instance;
     }
 
-    public static void createInstance(int n, int m, int nbAgents, int nbA, int nbB, int i, float kPlus, float kMoins, int nbIter, float erreur) {
-        instance = new Environnement(n, m, nbAgents, nbA, nbB, i, kPlus, kMoins, nbIter, erreur);
+    public static void createInstance(int n, int m, int nbAgents, int nbA, int nbB, int i, float kPlus, float kMoins, int nbIter, float erreur, int tailleMemoireAgent) {
+        instance = new Environnement(n, m, nbAgents, nbA, nbB, i, kPlus, kMoins, nbIter, erreur, tailleMemoireAgent);
 
         instance.lancer();
     }
 
-    private Environnement(int n, int m, int nbAgents, int nbA, int nbB, int i, float kPlus, float kMoins, int nbIter, float erreur) {
+    private Environnement(int n, int m, int nbAgents, int nbA, int nbB, int i, float kPlus, float kMoins, int nbIter, float erreur, int tailleMemoireAgent) {
 
         this.N = n;
         this.M = m;
@@ -77,7 +77,7 @@ public class Environnement {
                 randomValue = random.nextInt(grille.size());
             } while (grille.get(randomValue).getAgent() != null);
 
-            agent = new Agent();
+            agent = new Agent(tailleMemoireAgent);
             grille.get(randomValue).setAgent(agent);
             agentPosition.put(agent, grille.get(randomValue));
         }

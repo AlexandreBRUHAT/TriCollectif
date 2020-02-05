@@ -5,17 +5,19 @@ import java.util.Random;
 
 public class Agent extends Thread {
 
-    public Agent() {
+    public Agent(int tailleMem) {
         memoire = new LinkedList<>();
+        this.tailleMem = tailleMem;
     }
 
     // CARACTERISTIQUES
 
     private Objet porte;
     private LinkedList<String> memoire;
+    private int tailleMem;
 
     private void addMemoire(String type) {
-        if (memoire.size() >= 10) {
+        if (memoire.size() >= tailleMem) {
             memoire.push(type);
             memoire.poll();
         } else {
@@ -82,13 +84,12 @@ public class Agent extends Thread {
         Environnement env = Environnement.getInstance();
         Random random = new Random();
 
-        float f = 0;
-        for (Case c : voisins) {
-            if (c.getObjet() != null && c.getObjet().getType() == type)
-                ++f;
-        }
+        // f calculé pour la question 1
+        //float f = fQuestion1(type, voisins);
 
-        f /= voisins.size();
+        // f calculé pour la question 2
+        float f = fQuestion2(type, voisins);
+
         float proba = (env.getkPlus() / (env.getkPlus() + f)) * (env.getkPlus() / (env.getkPlus() + f));
         float randValue = random.nextFloat();
 
@@ -99,17 +100,38 @@ public class Agent extends Thread {
         Environnement env = Environnement.getInstance();
         Random random = new Random();
 
+        // f calculé pour la question 1 et toujours utilisé dans ce cas car c'est le voisinage direct
+        float f = fQuestion1(type, voisins);
+
+        float proba = (f / (env.getkMoins() + f)) * (f / (env.getkMoins() + f));
+        float randValue = random.nextFloat();
+
+        return randValue < proba;
+    }
+
+    private float fQuestion1(String type, List<Case> voisins) {
         float f = 0;
         for (Case c : voisins) {
             if (c.getObjet() != null && c.getObjet().getType() == type)
                 ++f;
         }
-
         f /= voisins.size();
-        float proba = (f / (env.getkMoins() + f)) * (f / (env.getkMoins() + f));
-        float randValue = random.nextFloat();
 
-        return randValue < proba;
+        return f;
+    }
+
+    private float fQuestion2(String type, List<Case> voisins) {
+        Environnement env = Environnement.getInstance();
+        Random random = new Random();
+
+        String autreType;
+        if (type.equals("A")) {
+            autreType = "B";
+        } else {
+            autreType = "A";
+        }
+
+        return (nbTypeEnMemoire(type) + nbTypeEnMemoire(autreType) * env.getErreur()) / memoire.size();
     }
 
     private String reconnaissanceObjet(String typeInitial) {
@@ -161,12 +183,12 @@ public class Agent extends Thread {
 
             if (porte == null) {
                 // Pas d'objet sur mon dos.
-                if (caseActuelle.getObjet() != null && doitPrendre(reconnaissanceObjet(caseActuelle.getObjet().getType()), voisins)) {
+                if (caseActuelle.getObjet() != null && doitPrendre(caseActuelle.getObjet().getType(), voisins)) {
                     prendre();
                 }
             } else {
                 // Je porte déjà un objet (sur mon dos).
-                if (caseActuelle.getObjet() == null && doitDeposer(reconnaissanceObjet(porte.getType()), voisins)) {
+                if (caseActuelle.getObjet() == null && doitDeposer(porte.getType(), voisins)) {
                     deposer();
                 }
             }
